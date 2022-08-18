@@ -7,18 +7,22 @@ html()
     script(type='text/javascript', src="/js/axios.js")
 
     link(rel='stylesheet', href='/css/buefy.css')
-    link(rel='stylesheet', href='/css/main.css')
-
+    style.
+      .tile {
+        display: flex;
+      }
     title 인터페이스 클라이언트
 
 body
   div
     #app
-      .tile.is-vertical
-        b-button(@click='changeVisibleValue()') Change Visible Value and downsizing Memory usage of Broswer.
-        .tile(v-for='(e, i) in element')
-          img(v-if='e.isVisible' :src='e.imgSrc')
-          h1 이미지 입니다. {{i}}
+      .tile(style="position:fixed;width:100%;z-index:100;background:white;")
+        b-button(@click='prev()' style="margin-right:auto;") Prev
+        b-button(@click='next()' style="margin-left:auto;") Next
+      .tile.is-vertical(v-if='e.isVisible' v-for='(e, i) in element' style="position:relative;")
+        img(:src='e.imgSrc' style="width:100%;margin:auto;")
+        b-message(size="is-large" closable='false' style="position:absolute;top: 1em;right: 50%;")
+          h2 Index: {{i}}
 				
 
 script(type="text/javascript").
@@ -26,52 +30,34 @@ script(type="text/javascript").
   function log(str) {
     console.log(str)
   }
-  function thread(f) {
-    setInterval(f, 3000)
-  }
-  function post(url, param, callback1, callback2) {
-      axios.post(url, param)
-      .then(function (res) {
-          //log("HTTP PATCH 응답 res.data=" + JSON.stringify(res.data))
-          callback1(res.data)
-      })
-      .catch(function (err) {
-        callback2(err)
-      })
-  }
-  function http(param) {
-      let posts = []
-      for(e of param)
-          posts.push(post(e.uri, e.g, e.cb))
-      Promise.allSync = function(i) {
-          if(i >= post.length)
-              return
-          if(typeof posts[i] == 'function')
-              posts[i]().then(() => {
-                  Promise.allSync(i+1)
-              })
-      }
-      Promise.allSync(0)
-
-  }
 
   let v = new Vue({
       el: '#app',
       components: {
       },
       data: {
-        selectedFullScreenYear: '2021',
-        selectedYear: '2021',
         element:[],
-        index: 1
+        index: 0
       },
       methods: {
-        changeVisibleValue: function() {
+        refresh: function() {
           for(let i = 0; i < 20; i++)
-            this.element[i] = {isVisible: false, imgSrc: `/img/img${i}`}
-          this.element[0] = {isVisible: true, imgSrc: '/img/img'}
-          this.element.push({})
-          this.element.pop()
+          {
+            this.element[i].isVisible = false
+            if(i >= this.index - 2 && i <= this.index + 2)
+              this.element[i].isVisible = true
+          }
+          window.scroll(0, 0)
+        },
+        next: function() {
+          this.index += 5
+          if(this.index >= 200) this.index = 199
+          this.refresh()
+        },
+        prev: function() {
+          this.index -= 5
+          if(this.index < 0) this.index = 0
+          this.refresh()
         }
       },
       computed: {
@@ -82,23 +68,16 @@ script(type="text/javascript").
       },
       mounted()
       {
-        for(let i = 0; i < 20; i++)
-          this.element.push({isVisible: true, imgSrc: `/img/img${i}`})
-        this.element[0] = {isVisible: true, imgSrc: '/img/img'}
-
+        for(let i = 0; i < 200; i++)
+          this.element.push({isVisible: false, imgSrc: `/img/img${i}`})
+        /*
         let thisVar = this
         window.onscroll = function(ev) {
-            console.log(window.innerHeight + window.scrollY, document.body.offsetHeight)
+            console.log(window.innerHeight, window.scrollY, document.body.offsetHeight)
             if ((window.innerHeight + window.scrollY + 1) >= document.body.offsetHeight) {
-              for(let i = 0; i < 2; i++)
-              {
-                console.log(thisVar.index, i)
-                thisVar.element[thisVar.index + i].isVisible = true
-
-              }
-              thisVar.index += 2
+              thisVar.next()
             }
-        }
+        }*/
 
       }
   })
