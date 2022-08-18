@@ -15,8 +15,9 @@ body
   div
     #app
       .tile.is-vertical
-        .tile(v-if='e.isVisible' v-for='(e, i) in element')
-          img(:src='e.imgSrc')
+        b-button(@click='changeVisibleValue()') Change Visible Value and downsizing Memory usage of Broswer.
+        .tile(v-for='(e, i) in element')
+          img(v-if='e.isVisible' :src='e.imgSrc')
           h1 이미지 입니다. {{i}}
 				
 
@@ -65,6 +66,13 @@ script(type="text/javascript").
         index: 1
       },
       methods: {
+        changeVisibleValue: function() {
+          for(let i = 0; i < 20; i++)
+            this.element[i] = {isVisible: false, imgSrc: `/img/img${i}`}
+          this.element[0] = {isVisible: true, imgSrc: '/img/img'}
+          this.element.push({})
+          this.element.pop()
+        }
       },
       computed: {
       },
@@ -74,8 +82,8 @@ script(type="text/javascript").
       },
       mounted()
       {
-        for(let i = 0; i < 100; i++)
-          this.element.push({isVisible: false, imgSrc: `/img/img${i}`})
+        for(let i = 0; i < 20; i++)
+          this.element.push({isVisible: true, imgSrc: `/img/img${i}`})
         this.element[0] = {isVisible: true, imgSrc: '/img/img'}
 
         let thisVar = this
