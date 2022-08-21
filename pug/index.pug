@@ -11,18 +11,47 @@ html()
       .tile {
         display: flex;
       }
+      .b-span {
+        display:inline-block;
+        width: 0.5em;
+      }
+      h1 {
+        font-size: 16pt;
+      }
+      h2 {
+        font-size: 15pt;
+      }
+      .dot {
+        height: 1.6em;
+        width: 1.6em;
+        border: 1px solid black;
+        border-radius: 50%;
+        display: inline-flex;
+      }
     title 인터페이스 클라이언트
 
 body
   div
     #app
-      .tile(style="position:fixed;width:100%;z-index:100;background:white;")
-        b-button(@click='prev()' style="margin-right:auto;") Prev
-        b-button(@click='next()' style="margin-left:auto;") Next
-      .tile.is-vertical(v-if='e.isVisible' v-for='(e, i) in element' style="position:relative;")
-        img(:src='e.imgSrc' style="width:100%;margin:auto;")
-        b-message(size="is-large" closable='false' style="position:absolute;top: 1em;right: 50%;")
-          h2 Index: {{i}}
+      .tile.is-vertical(style="position:fixed;width:100%;z-index:100;background:white;")
+        h1(style="margin:auto;") INFINITE-SCROLL-ACTION
+        .tile
+          b-button(@click='prev()' style="margin-right:auto;") Prev
+          h1 {{startIndex + 1}}-{{startIndex + pageSize - 1 >= contentList.length ? contentList.length : startIndex + pageSize}}
+          b-button(@click='next()' style="margin-left:auto;") Next
+      div(style="height: 5em;")
+      .tile.is-vertical(v-if='e.isVisible' v-for='(e, i) in contentList' style="position:relative;padding:1em;padding-bottom:0;")
+        h2
+          .dot
+            span(style="margin:auto") {{i + 1}}
+          .b-span
+          span {{e.title}}
+        div(style="height:1em;")
+        p {{e.content}}
+        div(style="height:1em;")
+        img(:src='e.img' style="width:25%;margin:auto;")
+        //-b-message(size="is-large" closable='false' style="position:absolute;top: 1em;right: 50%;")
+          h2 startIndex: 
 				
 
 script(type="text/javascript").
@@ -36,27 +65,33 @@ script(type="text/javascript").
       components: {
       },
       data: {
-        element:[],
-        index: 0
+        contentList:[],
+        pageSize: 5,
+        startIndex: 0
       },
       methods: {
         refresh: function() {
-          for(let i = 0; i < 20; i++)
+          function between(a, b, c)
           {
-            this.element[i].isVisible = false
-            if(i >= this.index - 2 && i <= this.index + 2)
-              this.element[i].isVisible = true
+            if(a <= b && b <= c) return true 
+            return false
+          }
+          for(let i = 0; i < this.contentList.length; i++)
+          {
+            this.contentList[i].isVisible = false
+            if(between(this.startIndex, i, this.startIndex + this.pageSize - 1))
+              this.contentList[i].isVisible = true
           }
           window.scroll(0, 0)
         },
         next: function() {
-          this.index += 5
-          if(this.index >= 200) this.index = 199
+          this.startIndex += this.pageSize
+          if(this.startIndex >= this.contentList.length) this.startIndex = this.contentList.length - 1
           this.refresh()
         },
         prev: function() {
-          this.index -= 5
-          if(this.index < 0) this.index = 0
+          this.startIndex -= this.pageSize
+          if(this.startIndex < 0) this.startIndex = 0
           this.refresh()
         }
       },
@@ -68,8 +103,8 @@ script(type="text/javascript").
       },
       mounted()
       {
-        for(let i = 0; i < 200; i++)
-          this.element.push({isVisible: false, imgSrc: `/img/img${i}`})
+        for(let i = 0; i < 20; i++)
+          this.contentList.push({isVisible: false, title:'한글 로렌 입숨', content: '얼마나 이것을 붙잡아 듣는다. 구하기 없으면, 몸이 동산에는 무엇을 길지 아름다우냐? 청춘에서만 안고, 살았으며, 설레는 트고, 부패뿐이다. 풀이 그와 트고, 있는 이 끓는다.', img: `/img/img${i}`})
         /*
         let thisVar = this
         window.onscroll = function(ev) {
@@ -81,13 +116,3 @@ script(type="text/javascript").
 
       }
   })
-
-
-
-
-
-
-
-
-
-
