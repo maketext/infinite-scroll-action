@@ -112,7 +112,112 @@ script(type="text/javascript").
             if ((window.innerHeight + window.scrollY + 1) >= document.body.offsetHeight) {
               thisVar.next()
             }
-        }*/
+        }
+	async getCategoriesContentsWholeList(year) {
+	await categoriesContentsWholeList({
+		category: '전시 프로그램',
+		year: year
+	}).then(res => {
+		const data = res.data.result
+		const list = []
+		data.map(item => {
+			list.push({
+				titleKo: item.categoryTitleKo,
+				titleEn: item.categoryTitleEn,
+				authorKo: item.authorKo,
+				authorEn: item.authorEn,
+				contentIdx: item.contentIdx,
+				contentTitleEn: item.titleEn,
+				contentTitleKo: item.titleKo,
+				image1: item.image1
+			})
+		})
+		if (year == '2021') {
+			this.firstContentList = list.slice(0, 10)
+			// this.firstContentList = list
+			this.isDataLoading1 = true
+		} else if (year == '2019') {
+			this.secondContentList = list.slice(0, 10)
+			// this.secondContentList = list
+			this.isDataLoading2 = true
+		} else if (year == '2017') {
+			this.thirdContentList = list.slice(0, 10)
+			// this.thirdContentList = list
+			this.isDataLoading3 = true
+		}
+	})
+	},
+			if (year == '2021') {
+				if (this.$refs.infiniteLoading) {
+					this.refreshInfiniteLoading('2021')
+				}
+				this.firstCategory = selectedItem
+				selectedItem.value == '202100'
+					? this.getCategoriesContentsWholeList('2021')
+					: selectedItem.value == '2021'
+					? ''
+					: this.getCategoriesContentsList(selectedItem.value)
+			} else if (year == '2019') {
+				if (this.$refs.infiniteLoading2) {
+					this.refreshInfiniteLoading('2019')
+				}
+				this.secondCategory = selectedItem
+				selectedItem.value == '201900'
+					? this.getCategoriesContentsWholeList('2019')
+					: selectedItem.value == '2019'
+					? ''
+					: this.getCategoriesContentsList(selectedItem.value)
+			} else {
+				if (this.$refs.infiniteLoading3) {
+					this.refreshInfiniteLoading('2017')
+				}
+				this.thirdCategory = selectedItem
+				selectedItem.value == '201700'
+					? this.getCategoriesContentsWholeList('2017')
+					: selectedItem.value == '2017'
+					? ''
+					: this.getCategoriesContentsList(selectedItem.value)
+			}
+			
+					async getCategoriesContentsWholeList(year) {
+			await categoriesContentsWholeList({
+				category: '전시 프로그램',
+				year: year
+			}).then(res => {
+				const data = res.data.result
+				const list = []
+				data.map(item => {
+					list.push({
+						titleKo: item.categoryTitleKo,
+						titleEn: item.categoryTitleEn,
+						authorKo: item.authorKo,
+						authorEn: item.authorEn,
+						contentIdx: item.contentIdx,
+						contentTitleEn: item.titleEn,
+						contentTitleKo: item.titleKo,
+						image1: item.image1
+					})
+				})
+				if (year == '2021') {
+					this.firstContentList = list.slice(0, 10)
+					// this.firstContentList = list
+					this.isDataLoading1 = true
+				} else if (year == '2019') {
+					this.secondContentList = list.slice(0, 10)
+					// this.secondContentList = list
+					this.isDataLoading2 = true
+				} else if (year == '2017') {
+					this.thirdContentList = list.slice(0, 10)
+					// this.thirdContentList = list
+					this.isDataLoading3 = true
+				}
+			})
+		},*/
+	
+	
+	
+		
+	
 
       }
   })
