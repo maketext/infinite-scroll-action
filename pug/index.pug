@@ -38,13 +38,15 @@ body
         h1(style="margin:auto;") INFINITE-SCROLL-ACTION
         .tile
           b-button(@click='prev()' style="margin-right:auto;") Prev
+          b-button(@click='sort("오름차순")' style="margin-left:auto;") Sort ascending
+          b-button(@click='sort("내림차순")' style="margin-left:auto;") Sort descending
           h1 {{startIndex + 1}}-{{startIndex + pageSize - 1 >= contentList.length ? contentList.length : startIndex + pageSize}}
           b-button(@click='next()' style="margin-left:auto;") Next
       div(style="height: 5em;")
       .tile.is-vertical(v-if='e.isVisible' v-for='(e, i) in contentList' style="position:relative;padding:1em;padding-bottom:0;")
         h2
           .dot
-            span(style="margin:auto") {{i + 1}}
+            span(style="margin:auto") {{e.contentIdx + 1}}
           .b-span
           span {{e.titleKo}}
         div(style="height:1em;")
@@ -78,9 +80,14 @@ script(type="text/javascript").
           return new Promise ((resolve, reject) => {
             setTimeout(() => {
               let result = []
+              function num(num)
+              {
+                if(num < 10) return `0${num}`
+                return num
+              }
               for(let i = 0; i < v.length; i++)
                 result.push(                {
-                  categoryTitleKo: '살았으며, 물방아 소금이라 착목한는 길을 뛰노는 피가 현저하게 두기 보라.',
+                  categoryTitleKo: `${num(i)}) 살았으며, 물방아 소금이라 착목한는 길을 뛰노는 피가 현저하게 두기 보라.`,
                   categoryTitleEn: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
                   authorKo: '홍길동',
                   authorEn: 'Timothy',
@@ -142,6 +149,27 @@ script(type="text/javascript").
         prev: function() {
           this.startIndex -= this.pageSize
           if(this.startIndex < 0) this.startIndex = 0
+          this.refresh()
+        },
+        sort: function(cmd) {
+          if(cmd == '오름차순')
+          {
+            this.contentList.sort(function(a, b) {
+              if(a.titleKo < b.titleKo) return -1
+              if(a.titleKo > b.titleKo) return 1
+              return 0
+            })
+
+          } 
+          else
+          {
+            this.contentList.sort(function(a, b) {
+              if(a.titleKo < b.titleKo) return 1
+              if(a.titleKo > b.titleKo) return -1
+              return 0
+            })
+
+          }
           this.refresh()
         }
       },
