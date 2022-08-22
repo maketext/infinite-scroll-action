@@ -45,11 +45,13 @@ body
           .dot
             span(style="margin:auto") {{i + 1}}
           .b-span
-          span {{e.title}}
+          span {{e.titleKo}}
         div(style="height:1em;")
-        p {{e.content}}
+        p {{e.authorKo}}
+        p {{e.contentTitleKo}}
+
         div(style="height:1em;")
-        img(:src='e.img' style="width:25%;margin:auto;")
+        img(:src='e.image1' style="width:25%;margin:auto;")
         //-b-message(size="is-large" closable='false' style="position:absolute;top: 1em;right: 50%;")
           h2 startIndex: 
 				
@@ -65,11 +67,58 @@ script(type="text/javascript").
       components: {
       },
       data: {
-        contentList:[],
+        length:20,
+        contentList: [],
         pageSize: 5,
         startIndex: 0
       },
       methods: {
+        dummyPromise: function(cmd, obj) {
+          return new Promise ((resolve, reject) => {
+            setTimeout(() => {
+              let result = []
+              for(let i = 0; i < v.length; i++)
+                result.push(                {
+                  categoryTitleKo: '살았으며, 물방아 소금이라 착목한는 길을 뛰노는 피가 현저하게 두기 보라.',
+                  categoryTitleEn: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
+                  authorKo: '홍길동',
+                  authorEn: 'Timothy',
+                  contentIdx: i,
+                  titleEn: 'Semper eget duis at tellus at urna condimentum mattis pellentesque.',
+                  titleKo: '부패를 청춘을 봄날의 하여도 그것은 현저하게 위하여서, 황금시대다. 하는 방황하였으며, 얼음에 보이는 무엇이 그리하였는가? 되려니와, 얼마나 하여도 반짝이는 교향악이다.',
+                  image1: `/img/img${i}`
+                })
+
+              if(cmd == '성공') resolve({data:{result: result}})
+              else reject(null)
+
+            }, 3000)
+          })
+        },
+      	async getContentListAll(year) {
+          await this.dummyPromise('성공', {
+            category: '전시 프로그램',
+            year: year
+          }).then(res => {
+            const data = res.data.result
+            const list = []
+            data.map(item => {
+              list.push({
+                titleKo: item.categoryTitleKo,
+                titleEn: item.categoryTitleEn,
+                authorKo: item.authorKo,
+                authorEn: item.authorEn,
+                contentIdx: item.contentIdx,
+                contentTitleEn: item.titleEn,
+                contentTitleKo: item.titleKo,
+                image1: item.image1,
+                isVisible: false
+              })
+            })
+            this.contentList = list
+            //this.contentList = list.slice(0, 10)
+          })
+        },        
         refresh: function() {
           function between(a, b, c)
           {
@@ -101,10 +150,9 @@ script(type="text/javascript").
       {
 
       },
-      mounted()
+      async mounted()
       {
-        for(let i = 0; i < 20; i++)
-          this.contentList.push({isVisible: false, title:'한글 로렌 입숨', content: '얼마나 이것을 붙잡아 듣는다. 구하기 없으면, 몸이 동산에는 무엇을 길지 아름다우냐? 청춘에서만 안고, 살았으며, 설레는 트고, 부패뿐이다. 풀이 그와 트고, 있는 이 끓는다.', img: `/img/img${i}`})
+        await this.getContentListAll(2021)
         /*
         let thisVar = this
         window.onscroll = function(ev) {
@@ -112,112 +160,6 @@ script(type="text/javascript").
             if ((window.innerHeight + window.scrollY + 1) >= document.body.offsetHeight) {
               thisVar.next()
             }
-        }
-	async getCategoriesContentsWholeList(year) {
-	await categoriesContentsWholeList({
-		category: '전시 프로그램',
-		year: year
-	}).then(res => {
-		const data = res.data.result
-		const list = []
-		data.map(item => {
-			list.push({
-				titleKo: item.categoryTitleKo,
-				titleEn: item.categoryTitleEn,
-				authorKo: item.authorKo,
-				authorEn: item.authorEn,
-				contentIdx: item.contentIdx,
-				contentTitleEn: item.titleEn,
-				contentTitleKo: item.titleKo,
-				image1: item.image1
-			})
-		})
-		if (year == '2021') {
-			this.firstContentList = list.slice(0, 10)
-			// this.firstContentList = list
-			this.isDataLoading1 = true
-		} else if (year == '2019') {
-			this.secondContentList = list.slice(0, 10)
-			// this.secondContentList = list
-			this.isDataLoading2 = true
-		} else if (year == '2017') {
-			this.thirdContentList = list.slice(0, 10)
-			// this.thirdContentList = list
-			this.isDataLoading3 = true
-		}
-	})
-	},
-			if (year == '2021') {
-				if (this.$refs.infiniteLoading) {
-					this.refreshInfiniteLoading('2021')
-				}
-				this.firstCategory = selectedItem
-				selectedItem.value == '202100'
-					? this.getCategoriesContentsWholeList('2021')
-					: selectedItem.value == '2021'
-					? ''
-					: this.getCategoriesContentsList(selectedItem.value)
-			} else if (year == '2019') {
-				if (this.$refs.infiniteLoading2) {
-					this.refreshInfiniteLoading('2019')
-				}
-				this.secondCategory = selectedItem
-				selectedItem.value == '201900'
-					? this.getCategoriesContentsWholeList('2019')
-					: selectedItem.value == '2019'
-					? ''
-					: this.getCategoriesContentsList(selectedItem.value)
-			} else {
-				if (this.$refs.infiniteLoading3) {
-					this.refreshInfiniteLoading('2017')
-				}
-				this.thirdCategory = selectedItem
-				selectedItem.value == '201700'
-					? this.getCategoriesContentsWholeList('2017')
-					: selectedItem.value == '2017'
-					? ''
-					: this.getCategoriesContentsList(selectedItem.value)
-			}
-			
-					async getCategoriesContentsWholeList(year) {
-			await categoriesContentsWholeList({
-				category: '전시 프로그램',
-				year: year
-			}).then(res => {
-				const data = res.data.result
-				const list = []
-				data.map(item => {
-					list.push({
-						titleKo: item.categoryTitleKo,
-						titleEn: item.categoryTitleEn,
-						authorKo: item.authorKo,
-						authorEn: item.authorEn,
-						contentIdx: item.contentIdx,
-						contentTitleEn: item.titleEn,
-						contentTitleKo: item.titleKo,
-						image1: item.image1
-					})
-				})
-				if (year == '2021') {
-					this.firstContentList = list.slice(0, 10)
-					// this.firstContentList = list
-					this.isDataLoading1 = true
-				} else if (year == '2019') {
-					this.secondContentList = list.slice(0, 10)
-					// this.secondContentList = list
-					this.isDataLoading2 = true
-				} else if (year == '2017') {
-					this.thirdContentList = list.slice(0, 10)
-					// this.thirdContentList = list
-					this.isDataLoading3 = true
-				}
-			})
-		},*/
-	
-	
-	
-		
-	
-
+        }*/
       }
   })
