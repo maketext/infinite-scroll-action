@@ -5,7 +5,8 @@ html()
     script(type='text/javascript', src="/js/vue2611.js")
     script(type='text/javascript', src="/js/buefy.js")
     script(type='text/javascript', src="/js/axios.js")
-
+    script(src='https://unpkg.com/sweetalert/dist/sweetalert.min.js')
+    
     link(rel='stylesheet', href='/css/buefy.css')
     style.
       .tile {
@@ -153,6 +154,7 @@ script(type="text/javascript").
       async mounted()
       {
         await this.getContentListAll(2021)
+        swal({icon: "success", text: 'Load Finished.'})
         /*
         let thisVar = this
         window.onscroll = function(ev) {
