@@ -9,8 +9,21 @@ html()
     
     link(rel='stylesheet', href='/css/buefy.css')
     style.
+      button {
+        border-radius: calc(3em - 1px);
+        border: none;
+        padding: 1em;
+        background: #151414;        
+        color: white;        
+      }
+      .btn-active {
+        border: 3px solid #595959;
+      }
       .tile {
         display: flex;
+      }
+      .ml {
+        margin-left: 1em;
       }
       .b-span {
         display:inline-block;
@@ -36,12 +49,14 @@ body
     #app
       .tile.is-vertical(style="position:fixed;width:100%;z-index:100;background:white;")
         h1(style="margin:auto;") INFINITE-SCROLL-ACTION
+          span {{"("}}
+          span {{startIndex + 1}}-{{startIndex + pageSize - 1 >= contentList.length ? contentList.length : startIndex + pageSize}}
+          span {{")"}}
         .tile
-          b-button(@click='prev()' style="margin-right:auto;") Prev
-          b-button(@click='sort("오름차순")' style="margin-left:auto;") Sort ascending
-          b-button(@click='sort("내림차순")' style="margin-left:auto;") Sort descending
-          h1 {{startIndex + 1}}-{{startIndex + pageSize - 1 >= contentList.length ? contentList.length : startIndex + pageSize}}
-          b-button(@click='next()' style="margin-left:auto;") Next
+          button.ml(@click='prev()' :class="btn-active: btnActive['prev']") Prev
+          button.ml(@click='sort("오름차순")') Sort ascending
+          button.ml(@click='sort("내림차순")') Sort descending
+          button(@click='next()' style="margin-left:auto;") Next
       div(style="height: 5em;")
       .tile.is-vertical(v-if='e.isVisible' v-for='(e, i) in contentList' style="position:relative;padding:1em;padding-bottom:0;")
         h2
