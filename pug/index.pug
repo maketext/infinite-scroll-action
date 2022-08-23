@@ -53,7 +53,7 @@ body
           span {{startIndex + 1}}-{{startIndex + pageSize - 1 >= contentList.length ? contentList.length : startIndex + pageSize}}
           span {{")"}}
         .tile
-          button.ml(@click='prev()' :class="btn-active: btnActive['prev']") Prev
+          button.ml(@click='prev()') Prev
           button.ml(@click='sort("오름차순")') Sort ascending
           button.ml(@click='sort("내림차순")') Sort descending
           button(@click='next()' style="margin-left:auto;") Next
